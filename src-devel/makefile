@@ -67,10 +67,13 @@ MPFR_VERSION=4.2.2
 BOOST_VERSION=1_91_0
 
 # https://github.com/CGAL/cgal/releases
-CGAL_VERSION=6.1.1
+CGAL_VERSION=6.2
 
 # https://gitlab.com/sfcgal/SFCGAL/-/releases
-SFCGAL_VERSION=2.2.0
+SFCGAL_VERSION=2.3.0
+
+# https://github.com/nlohmann/json/releases
+NLOHMANNJSON_VERSION=3.12.0
 
 LIBEDIT_VERSION=20130611-3.1
 
@@ -983,6 +986,38 @@ clean-boost:
 	rm -Rf boost_$(BOOST_VERSION)
 
 
+###############################
+####### NLOHMANN-JSON #########
+###############################
+
+nlohmann-json: $(PREFIX)/include/nlohmann/json.hpp
+	touch $@
+
+$(PREFIX)/include/nlohmann/json.hpp: nlohmann-json-$(NLOHMANNJSON_VERSION)/build/Makefile
+	cmake --build nlohmann-json-$(NLOHMANNJSON_VERSION)/build
+	cmake --build nlohmann-json-$(NLOHMANNJSON_VERSION)/build --target install
+	touch $@
+
+nlohmann-json-$(NLOHMANNJSON_VERSION)/build/Makefile: nlohmann-json-$(NLOHMANNJSON_VERSION)/CMakeLists.txt
+	cd nlohmann-json-$(NLOHMANNJSON_VERSION)/build && cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$(PREFIX)" -DCMAKE_MACOSX_RPATH=ON -DCMAKE_INSTALL_RPATH="$(PREFIX)/lib" -DCMAKE_INSTALL_NAME_DIR="$(PREFIX)/lib"
+
+nlohmann-json-$(NLOHMANNJSON_VERSION)/CMakeLists.txt: nlohmann-json-$(NLOHMANNJSON_VERSION).tar.gz
+	$(TAR) nlohmann-json-$(NLOHMANNJSON_VERSION).tar.gz
+	mv json-$(NLOHMANNJSON_VERSION) nlohmann-json-$(NLOHMANNJSON_VERSION)
+	mkdir nlohmann-json-$(NLOHMANNJSON_VERSION)/build
+	touch $@
+
+nlohmann-json-$(NLOHMANNJSON_VERSION).tar.gz:
+	$(CURL) --remote-header-name https://github.com/nlohmann/json/archive/refs/tags/v$(NLOHMANNJSON_VERSION).tar.gz
+	mv json-$(NLOHMANNJSON_VERSION).tar.gz nlohmann-json-$(NLOHMANNJSON_VERSION).tar.gz
+
+clean-nlohmann-json:
+	rm -Rf nlohmann-json-$(NLOHMANNJSON_VERSION)
+
+check-nlohmann-json:
+	cmake --build nlohmann-json-$(NLOHMANNJSON_VERSION)/build --target test -- ARGS="-LE 'not_reproducible|git_required'"
+
+
 ######################
 ####### CGAL #########
 ######################
@@ -1009,7 +1044,7 @@ clean-cgal:
 ######################
 
 # used for gdal, postgis
-# uses cgal, boost, gmp, mpfr
+# uses cgal, boost, gmp, mpfr, nlohmannjson
 
 sfcgal: $(PREFIX)/lib/libSFCGAL.dylib
 	touch $@
@@ -1018,13 +1053,11 @@ $(PREFIX)/lib/libSFCGAL.dylib: SFCGAL-v$(SFCGAL_VERSION)/Makefile
 	make -C SFCGAL-v$(SFCGAL_VERSION)
 	make -C SFCGAL-v$(SFCGAL_VERSION) install
 
-SFCGAL-v$(SFCGAL_VERSION)/Makefile: SFCGAL-v$(SFCGAL_VERSION)/CMakeLists.txt cgal-$(CGAL_VERSION)/include/CGAL $(PREFIX)/lib/libboost_thread.dylib $(PREFIX)/lib/libmpfr.dylib $(PREFIX)/lib/libgmp.dylib
+SFCGAL-v$(SFCGAL_VERSION)/Makefile: SFCGAL-v$(SFCGAL_VERSION)/CMakeLists.txt cgal-$(CGAL_VERSION)/include/CGAL $(PREFIX)/lib/libboost_thread.dylib $(PREFIX)/lib/libmpfr.dylib $(PREFIX)/lib/libgmp.dylib $(PREFIX)/include/nlohmann/json.hpp
 	cd SFCGAL-v$(SFCGAL_VERSION) && GMP_DIR=$(PREFIX)/lib/ MPFR_DIR=$(PREFIX)/lib/ CGAL_DIR=../cgal-$(CGAL_VERSION) BOOST_ROOT=$(BUILD_PREFIX) cmake . -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$(PREFIX)" -DCMAKE_MACOSX_RPATH=ON -DCMAKE_INSTALL_RPATH="$(PREFIX)/lib" -DCMAKE_INSTALL_NAME_DIR="$(PREFIX)/lib"
 
 SFCGAL-v$(SFCGAL_VERSION)/CMakeLists.txt: SFCGAL-v$(SFCGAL_VERSION).tar.gz
 	$(TAR) SFCGAL-v$(SFCGAL_VERSION).tar.gz
-	# patch support for newer boost no longer including a stub libboost_system library as it is header-only: https://gitlab.com/sfcgal/SFCGAL/-/merge_requests/539
-	patch -b -d "SFCGAL-v$(SFCGAL_VERSION)" -p1 <patches/sfcgal-boost-1.89.patch
 	touch $@
 
 SFCGAL-v$(SFCGAL_VERSION).tar.gz:
