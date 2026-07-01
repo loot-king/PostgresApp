@@ -99,7 +99,7 @@ PLV8_VERSION=3.0.0
 
 # https://github.com/json-c/json-c/wiki
 # https://s3.amazonaws.com/json-c_releases/releases/index.html
-JSONC_VERSION=0.18
+JSONC_VERSION=0.19
 
 # https://github.com/eulerto/wal2json/releases
 WAL2JSON_VERSION=wal2json_2_6
