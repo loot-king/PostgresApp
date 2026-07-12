@@ -148,6 +148,7 @@ PLJS_VERSION=1.0.5
 # TODO try quickjs-ng
 QUICKJS_VERSION=2025-04-26
 # quickjs 2025-09-13 available, does not compile with pljs, even with an updated renaming patch
+# 2026-06-04 available
 
 # https://unicode-org.github.io/icu/download/
 # Unicode 17, CLDR 48.2, sync with postgres /src/Makefile.global.in
