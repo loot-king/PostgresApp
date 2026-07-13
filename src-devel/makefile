@@ -112,7 +112,7 @@ ABSEIL_VERSION=20260526.0
 
 # https://github.com/protocolbuffers/protobuf/releases
 # 33.x, is kind of LTS: https://protobuf.dev/support/version-support/
-# 35.x available, will get LTS at 37 2026Q4. protobuf-c needs patch: https://github.com/protobuf-c/protobuf-c/issues/795
+# 36.x available, will get LTS at 37 2026Q4. protobuf-c needs patch: https://github.com/protobuf-c/protobuf-c/issues/795
 PROTOBUF_VERSION=33.6
 
 # https://github.com/protobuf-c/protobuf-c/releases
@@ -128,7 +128,7 @@ LIBPNG_VERSION=1.6.58
 OPENJPEG_VERSION=2.5.4
 
 # https://github.com/Unidata/netcdf-c/releases
-# TODO 4.9.3 available (pg16?), 4.10.0 available
+# TODO 4.9.3 available (pg16?), 4.10.1 available
 NETCDF_VERSION=4.9.2
 
 # https://github.com/EnterpriseDB/pldebugger/releases
