@@ -52,7 +52,7 @@ ZSTD_VERSION=1.5.7
 GDAL_VERSION=3.13.1
 
 # https://libgeos.org/usage/download/
-GEOS_VERSION=3.14.1
+GEOS_VERSION=3.15.0beta1
 
 # http://www.ijg.org
 JPEG_VERSION=10
