@@ -1,7 +1,8 @@
 # VERSION numbers
 
 # http://postgis.net/development/source_code/
-POSTGIS_VERSION=3.7.0alpha1
+# dev version (like 3.6.5dev) contain the unreleased commits towards that minor version
+POSTGIS_VERSION=3.7.0dev
 POSTGIS_MAJOR_VERSION=3
 
 # define either a full commit hash in POSTGRES_GIT_HASH or a git ref in POSTGRES_GIT_REF
@@ -1089,7 +1090,8 @@ postgis-${POSTGIS_VERSION}/configure: postgis-${POSTGIS_VERSION}.tar.gz
 	touch $@
 
 postgis-${POSTGIS_VERSION}.tar.gz:
-	$(CURL) "https://download.osgeo.org/postgis/source/postgis-${POSTGIS_VERSION}.tar.gz"
+	$(CURL) "https://download.osgeo.org/postgis/source/postgis-${POSTGIS_VERSION}.tar.gz" \
+	|| $(CURL) "https://postgis.net/stuff/postgis-${POSTGIS_VERSION}.tar.gz"
 
 clean-postgis:
 	rm -Rf postgis-${POSTGIS_VERSION}
